@@ -26,9 +26,6 @@ class BoardRep:
         self.checkmate = False
         self.stalemate = False
 
-        print(self.board_arr)
-
-        return
 
     def move(self, info):
         '''
@@ -173,8 +170,6 @@ class BoardRep:
                 if self.board_arr[dpos2[0]][dpos2[1]][0] == 'b':
                     final_pos.append([spos, dpos2])
 
-
-
             epos1 = (spos[0] - 1, spos[1])
             if self.board_arr[epos1[0]][epos1[1]] != '--':
                 return final_pos
@@ -185,18 +180,27 @@ class BoardRep:
                 if self.board_arr[epos2[0]][epos2[1]] != '--':
                     return final_pos              
                 final_pos.append([spos, epos2])
+
         
         if self.white_move == False:
-            if self.board_arr[spos[0] + 1][spos[1] + 1][0] == 'b':
-                final_pos.append([spos, (spos[0] + 1, spos[1] + 1)])
+            dpos1 = (spos[0] + 1, spos[1] + 1)
+            dpos2 = (spos[0] + 1, spos[1] - 1)
+            if not(dpos1[0] > 7 or dpos1[0] < 0 or dpos1[1] > 7 or dpos1[1] < 0):
+                if self.board_arr[dpos1[0]][dpos1[1]][0] == 'w':
+                    final_pos.append([spos, dpos1])
+            if not(dpos2[0] > 7 or dpos2[0] < 0 or dpos2[1] > 7 or dpos2[1] < 0):
+                if self.board_arr[dpos2[0]][dpos2[1]][0] == 'w':
+                    final_pos.append([spos, dpos2])
+
             epos1 = (spos[0] + 1, spos[1])
-            if self.board_arr[epos1[0]] != '--':
+            if self.board_arr[epos1[0]][epos1[1]] != '--':
                 return final_pos
             final_pos.append([spos, epos1])
-            if spos[0] == 6:
+
+            if spos[0] == 1:
                 epos2 = (spos[0] + 2, spos[1]) 
-                if self.board_arr[epos2[0]] != '--':
-                    return final_pos
+                if self.board_arr[epos2[0]][epos2[1]] != '--':
+                    return final_pos              
                 final_pos.append([spos, epos2])
             
         return final_pos
@@ -386,15 +390,24 @@ class BoardRep:
         
         for i in remove:
             self.moves.remove(i)
+        
+        if self.end_game(cur_k_loc):
+            return []
 
+        return self.moves
+
+    def end_game(self, k_loc):
+        print(self.moves)
         if len(self.moves) == 0:
-            if self.move_check(cur_k_loc, cur_k_loc, cur_k_loc):
+            if self.move_check(k_loc, k_loc, k_loc):
                 self.checkmate = True
             else:
                 self.stalemate = True
-        return self.moves
+        return self.checkmate or self.stalemate
 
 
+
+'''
 chess = BoardRep()
 
 # Ask the engine to find every move White can make right now
@@ -404,7 +417,7 @@ moves = chess.valid_moves()
 print(f"Total moves found: {len(moves)}")
 print('checkmate', chess.checkmate)
 print('stalemate', chess.stalemate)      
-'''
+
 chess = BoardRep()
 chess.move([(1,2), (4,2)])
 chess.move([(7,2), (4,2)])
